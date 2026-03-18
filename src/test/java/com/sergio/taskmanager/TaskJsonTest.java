@@ -27,4 +27,20 @@ public class TaskJsonTest {
         assertThat(json.write(task)).hasJsonPathBooleanValue("@.completed");
         assertThat(json.write(task)).extractingJsonPathBooleanValue("@.completed").isFalse();
     }
+
+    @Test
+    public void taskDeserializationTest() throws IOException {
+        String expected = """
+        {
+            "id": 1,
+            "title": "Test Task",
+            "description": "Another test task",
+            "completed": false
+        }
+        """;
+        assertThat(json.parse(expected)).isEqualTo(new Task(1L, "Test Task", "Another test task", false));
+        assertThat(json.parseObject(expected).id()).isEqualTo(1L);
+        assertThat(json.parseObject(expected).title()).isEqualTo("Test Task");
+        assertThat(json.parseObject(expected).description()).isEqualTo("Another test task");
+    }
 }
