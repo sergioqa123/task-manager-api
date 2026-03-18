@@ -42,5 +42,6 @@ public class TaskJsonTest {
         assertThat(json.parseObject(expected).id()).isEqualTo(1L);
         assertThat(json.parseObject(expected).title()).isEqualTo("Test Task");
         assertThat(json.parseObject(expected).description()).isEqualTo("Another test task");
+        assertThat(json.parseObject(expected).completed()).isFalse();
     }
 }
