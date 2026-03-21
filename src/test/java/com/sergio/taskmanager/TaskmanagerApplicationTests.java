@@ -38,4 +38,11 @@ class TaskmanagerApplicationTests {
 		assertThat(completed).isFalse();
 	}	
 
+	@Test
+	void shouldNotReturnATaskWhenIdIsUnknown() {
+		ResponseEntity<String> response = restTemplate.getForEntity("/tasks/1000", String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+		assertThat(response.getBody()).isBlank();
+	}
+
 }
