@@ -12,8 +12,12 @@ public class TaskController {
 
     @GetMapping("/{requestedId}")
     public ResponseEntity<Task> findById(@PathVariable Long requestedId) {
-        Task task = new Task(99L, "Test Task", "This is a test task.", false);
-        return ResponseEntity.ok(task);
+        if (requestedId.equals(99L)) {
+            Task task = new Task(99L, "Test Task", "This is a test task.", false);
+            return ResponseEntity.ok(task);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
     
 }
