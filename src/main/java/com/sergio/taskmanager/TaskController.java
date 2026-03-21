@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/tasks")
 public class TaskController {
 
+    TaskRepository taskRepository;
+
+    public TaskController(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
+
     @GetMapping("/{requestedId}")
     public ResponseEntity<Task> findById(@PathVariable Long requestedId) {
         if (requestedId.equals(99L)) {
