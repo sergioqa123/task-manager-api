@@ -1,5 +1,7 @@
 package com.sergio.taskmanager;
 
+import java.util.Optional;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,9 +20,9 @@ public class TaskController {
 
     @GetMapping("/{requestedId}")
     public ResponseEntity<Task> findById(@PathVariable Long requestedId) {
-        if (requestedId.equals(99L)) {
-            Task task = new Task(99L, "Test Task", "This is a test task.", false);
-            return ResponseEntity.ok(task);
+        Optional<Task> task = taskRepository.findById(requestedId);
+        if (task.isPresent()) {
+            return ResponseEntity.ok(task.get());
         } else {
             return ResponseEntity.notFound().build();
         }

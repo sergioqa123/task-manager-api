@@ -1,5 +1,7 @@
 package com.sergio.taskmanager;
 
-record Task(Long id, String title, String description, boolean completed) {
+import org.springframework.data.annotation.Id;
+
+record Task(@Id Long id, String title, String description, boolean completed) {
     
 }

@@ -1,0 +1,1 @@
+INSERT INTO task (id, title, description, completed) VALUES (99, 'Test Task', 'This is a test task.', false);
