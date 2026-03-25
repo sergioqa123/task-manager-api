@@ -49,7 +49,7 @@ class TaskmanagerApplicationTests {
 
 	@Test
 	void shouldCreateANewTask() {
-		Task newTask = new Task(44L, "New Task", "This is a new task.", false);
+		Task newTask = new Task(null, "New Task", "This is a new task.", false);
 		ResponseEntity<Void> responseEntity = restTemplate.postForEntity("/tasks", newTask, Void.class);
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
@@ -59,7 +59,7 @@ class TaskmanagerApplicationTests {
 		
 		DocumentContext documentContext = JsonPath.parse(response.getBody());
 		Number id = documentContext.read("$.id");
-		assertThat(id.intValue()).isEqualTo(44);
+		assertThat(id).isNotNull();
 		String title = documentContext.read("$.title");
 		assertThat(title).isEqualTo("New Task");
 		String description = documentContext.read("$.description");
