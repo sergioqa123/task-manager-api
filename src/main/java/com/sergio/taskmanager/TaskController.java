@@ -14,16 +14,16 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("/tasks")
-public class TaskController {
+class TaskController {
 
     TaskRepository taskRepository;
 
-    public TaskController(TaskRepository taskRepository) {
+    private TaskController(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 
     @GetMapping("/{requestedId}")
-    public ResponseEntity<Task> findById(@PathVariable Long requestedId) {
+    private ResponseEntity<Task> findById(@PathVariable Long requestedId) {
         Optional<Task> task = taskRepository.findById(requestedId);
         if (task.isPresent()) {
             return ResponseEntity.ok(task.get());
