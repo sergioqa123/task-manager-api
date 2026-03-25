@@ -2,6 +2,8 @@ package com.sergio.taskmanager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.net.URI;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,6 +45,27 @@ class TaskmanagerApplicationTests {
 		ResponseEntity<String> response = restTemplate.getForEntity("/tasks/1000", String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 		assertThat(response.getBody()).isBlank();
+	}
+
+	@Test
+	void shouldCreateANewTask() {
+		Task newTask = new Task(44L, "New Task", "This is a new task.", false);
+		ResponseEntity<Void> responseEntity = restTemplate.postForEntity("/tasks", newTask, Void.class);
+		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+
+		URI locationOfNewTask = responseEntity.getHeaders().getLocation();
+		ResponseEntity<String> response = restTemplate.getForEntity(locationOfNewTask, String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+		
+		DocumentContext documentContext = JsonPath.parse(response.getBody());
+		Number id = documentContext.read("$.id");
+		assertThat(id.intValue()).isEqualTo(44);
+		String title = documentContext.read("$.title");
+		assertThat(title).isEqualTo("New Task");
+		String description = documentContext.read("$.description");
+		assertThat(description).isEqualTo("This is a new task.");
+		boolean completed = documentContext.read("$.completed");
+		assertThat(completed).isFalse();
 	}
 
 }
