@@ -1,4 +1,5 @@
 package com.sergio.taskmanager;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
@@ -14,10 +15,24 @@ public class TaskJsonTest {
     @Autowired
     private JacksonTester<Task> json;
 
+    @Autowired
+    private JacksonTester<Task[]> jsonList;
+
+    private Task[] tasks;
+    
+    @BeforeEach
+    void setUp() {
+        tasks = new Task[] {
+            new Task(1L, "Task 1", "Description 1", false),
+            new Task(2L, "Task 2", "Description 2", true),
+            new Task(3L, "Task 3", "Description 3", false)
+        };
+    }
+
     @Test
     public void taskSerializationTest() throws IOException {
         Task task = new Task(1L, "Test Task", "This is a test task", false);
-        assertThat(json.write(task)).isStrictlyEqualToJson("expected.json");
+        assertThat(json.write(task)).isStrictlyEqualToJson("single.json");
         assertThat(json.write(task)).hasJsonPathNumberValue("@.id");
         assertThat(json.write(task)).extractingJsonPathNumberValue("@.id").isEqualTo(1);
         assertThat(json.write(task)).hasJsonPathStringValue("@.title");
@@ -43,5 +58,10 @@ public class TaskJsonTest {
         assertThat(json.parseObject(expected).title()).isEqualTo("Test Task");
         assertThat(json.parseObject(expected).description()).isEqualTo("Another test task");
         assertThat(json.parseObject(expected).completed()).isFalse();
+    }
+
+    @Test
+    void taskListSerializationTest() throws IOException {
+        assertThat(jsonList.write(tasks)).isStrictlyEqualToJson("list.json");        
     }
 }
