@@ -64,4 +64,31 @@ public class TaskJsonTest {
     void taskListSerializationTest() throws IOException {
         assertThat(jsonList.write(tasks)).isStrictlyEqualToJson("list.json");        
     }
+
+    @Test
+    void taskListDeserializationTest() throws IOException {
+        String expected = """
+        [
+            {
+                "id": 1,
+                "title": "Task 1",
+                "description": "Description 1",
+                "completed": false
+            },
+            {
+                "id": 2,
+                "title": "Task 2",
+                "description": "Description 2",
+                "completed": true
+            },
+            {
+                "id": 3,
+                "title": "Task 3",
+                "description": "Description 3",
+                "completed": false
+            }
+        ]
+        """;
+        assertThat(jsonList.parse(expected)).isEqualTo(tasks);
+    }
 }
