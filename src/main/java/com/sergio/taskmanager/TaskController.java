@@ -38,5 +38,10 @@ class TaskController {
         URI locationOfNewTask = ucb.path("/tasks/{id}").buildAndExpand(savedTask.id()).toUri();
         return ResponseEntity.created(locationOfNewTask).build();
     }
+
+    @GetMapping
+    private ResponseEntity<Iterable<Task>> findAll() {
+        return ResponseEntity.ok(taskRepository.findAll());
+    }
     
 }
