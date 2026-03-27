@@ -10,9 +10,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
+
+import net.minidev.json.JSONArray;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TaskmanagerApplicationTests {
@@ -48,6 +51,7 @@ class TaskmanagerApplicationTests {
 	}
 
 	@Test
+	@DirtiesContext
 	void shouldCreateANewTask() {
 		Task newTask = new Task(null, "New Task", "This is a new task.", false);
 		ResponseEntity<Void> responseEntity = restTemplate.postForEntity("/tasks", newTask, Void.class);
@@ -67,5 +71,25 @@ class TaskmanagerApplicationTests {
 		boolean completed = documentContext.read("$.completed");
 		assertThat(completed).isFalse();
 	}
+
+	@Test
+	void shouldReturnAllTasksWhenListIsRequested() {
+		ResponseEntity<String> response = restTemplate.getForEntity("/tasks", String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(response.getBody());
+		int taskCount = documentContext.read("$.length()");
+		assertThat(taskCount).isEqualTo(3);
+
+		JSONArray ids = documentContext.read("$..id");
+		assertThat(ids).containsExactlyInAnyOrder(99, 100, 101);
+		JSONArray titles = documentContext.read("$..title");
+		assertThat(titles).containsExactlyInAnyOrder("Test Task", "Task 100", "Task 101");
+		JSONArray descriptions = documentContext.read("$..description");
+		assertThat(descriptions).containsExactlyInAnyOrder("This is a test task.", "Description for Task 100", "Description for Task 101");
+		JSONArray completions = documentContext.read("$..completed");
+		assertThat(completions).containsExactlyInAnyOrder(false, true, false);
+	}
+	
 
 }
