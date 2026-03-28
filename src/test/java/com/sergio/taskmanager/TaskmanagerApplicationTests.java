@@ -100,4 +100,23 @@ class TaskmanagerApplicationTests {
 		JSONArray page = documentContext.read("$[*]");
 		assertThat(page.size()).isEqualTo(1);
 	}
+
+	@Test
+	void shouldReturnASortedPageOfTasks() {
+		ResponseEntity<String> response = restTemplate.getForEntity("/tasks?page=0&size=1&sort=id,desc", String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(response.getBody());
+		JSONArray page = documentContext.read("$[*]");
+		assertThat(page.size()).isEqualTo(1);
+		JSONArray ids = documentContext.read("$..id");
+		assertThat(ids).containsExactly(101);
+
+		String title = documentContext.read("$[0].title");
+		assertThat(title).isEqualTo("Task 101");
+		String description = documentContext.read("$[0].description");
+		assertThat(description).isEqualTo("Description for Task 101");
+		boolean completed = documentContext.read("$[0].completed");
+		assertThat(completed).isFalse();
+	}
 }
