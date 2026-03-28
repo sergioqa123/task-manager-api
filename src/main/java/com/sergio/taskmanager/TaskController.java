@@ -42,7 +42,8 @@ class TaskController {
         Page<Task> page = taskRepository.findAll(
             PageRequest.of(
                 pageable.getPageNumber(),
-                pageable.getPageSize()
+                pageable.getPageSize(),
+                pageable.getSort()
             )
         );
         return ResponseEntity.ok(page.getContent());
