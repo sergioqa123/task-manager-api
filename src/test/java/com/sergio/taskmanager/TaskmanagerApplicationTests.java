@@ -119,4 +119,16 @@ class TaskmanagerApplicationTests {
 		boolean completed = documentContext.read("$[0].completed");
 		assertThat(completed).isFalse();
 	}
+
+	@Test
+	void shouldReturnASortedPageOfTasksWithNoParametersAndUseDefaultValues() {
+		ResponseEntity<String> response = restTemplate.getForEntity("/tasks", String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+		DocumentContext documentContext = JsonPath.parse(response.getBody());
+		JSONArray page = documentContext.read("$[*]");
+		assertThat(page.size()).isEqualTo(3);
+		JSONArray ids = documentContext.read("$..id");
+		assertThat(ids).containsExactly(99, 100, 101);
+	}
 }
