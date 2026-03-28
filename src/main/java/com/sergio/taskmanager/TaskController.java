@@ -6,6 +6,7 @@ import java.util.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -43,7 +44,7 @@ class TaskController {
             PageRequest.of(
                 pageable.getPageNumber(),
                 pageable.getPageSize(),
-                pageable.getSort()
+                pageable.getSortOr(Sort.by(Sort.Direction.ASC, "id"))
             )
         );
         return ResponseEntity.ok(page.getContent());
