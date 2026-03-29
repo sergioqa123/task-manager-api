@@ -3,18 +3,21 @@
         "id": 1,
         "title": "Task 1",
         "description": "Description 1",
-        "completed": false
+        "completed": false,
+        "owner": "sergio"
     },
     {
         "id": 2,
         "title": "Task 2",
         "description": "Description 2",
-        "completed": true
+        "completed": true,
+        "owner": "sergio"
     },
     {
         "id": 3,
         "title": "Task 3",
         "description": "Description 3",
-        "completed": false
+        "completed": false,
+        "owner": "sergio"
     }
 ]
