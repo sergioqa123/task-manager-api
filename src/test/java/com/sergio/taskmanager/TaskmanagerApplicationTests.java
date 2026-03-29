@@ -53,7 +53,7 @@ class TaskmanagerApplicationTests {
 	@Test
 	@DirtiesContext
 	void shouldCreateANewTask() {
-		Task newTask = new Task(null, "New Task", "This is a new task.", false);
+		Task newTask = new Task(null, "New Task", "This is a new task.", false, "sergio");
 		ResponseEntity<Void> responseEntity = restTemplate.postForEntity("/tasks", newTask, Void.class);
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 

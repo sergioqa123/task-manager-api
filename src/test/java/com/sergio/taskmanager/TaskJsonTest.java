@@ -23,15 +23,15 @@ public class TaskJsonTest {
     @BeforeEach
     void setUp() {
         tasks = new Task[] {
-            new Task(1L, "Task 1", "Description 1", false),
-            new Task(2L, "Task 2", "Description 2", true),
-            new Task(3L, "Task 3", "Description 3", false)
+            new Task(1L, "Task 1", "Description 1", false, "sergio"),
+            new Task(2L, "Task 2", "Description 2", true, "sergio"),
+            new Task(3L, "Task 3", "Description 3", false, "sergio")
         };
     }
 
     @Test
     public void taskSerializationTest() throws IOException {
-        Task task = new Task(1L, "Test Task", "This is a test task", false);
+        Task task = new Task(1L, "Test Task", "This is a test task", false, "sergio");
         assertThat(json.write(task)).isStrictlyEqualToJson("single.json");
         assertThat(json.write(task)).hasJsonPathNumberValue("@.id");
         assertThat(json.write(task)).extractingJsonPathNumberValue("@.id").isEqualTo(1);
@@ -50,10 +50,11 @@ public class TaskJsonTest {
             "id": 1,
             "title": "Test Task",
             "description": "Another test task",
-            "completed": false
+            "completed": false,
+            "owner": "sergio"
         }
         """;
-        assertThat(json.parse(expected)).isEqualTo(new Task(1L, "Test Task", "Another test task", false));
+        assertThat(json.parse(expected)).isEqualTo(new Task(1L, "Test Task", "Another test task", false, "sergio"));
         assertThat(json.parseObject(expected).id()).isEqualTo(1L);
         assertThat(json.parseObject(expected).title()).isEqualTo("Test Task");
         assertThat(json.parseObject(expected).description()).isEqualTo("Another test task");
@@ -73,19 +74,23 @@ public class TaskJsonTest {
                 "id": 1,
                 "title": "Task 1",
                 "description": "Description 1",
-                "completed": false
+                "completed": false,
+                "owner": "sergio"
+
             },
             {
                 "id": 2,
                 "title": "Task 2",
                 "description": "Description 2",
-                "completed": true
+                "completed": true,
+                "owner": "sergio"
             },
             {
                 "id": 3,
                 "title": "Task 3",
                 "description": "Description 3",
-                "completed": false
+                "completed": false,
+                "owner": "sergio"
             }
         ]
         """;
