@@ -33,8 +33,9 @@ class TaskController {
     }
 
     @PostMapping
-    private ResponseEntity<Void> createTask(@RequestBody Task newTaskRequest, UriComponentsBuilder ucb) {
-        Task savedTask = taskRepository.save(newTaskRequest);
+    private ResponseEntity<Void> createTask(@RequestBody Task newTaskRequest, UriComponentsBuilder ucb, Principal principal) {
+        Task taskWithOwner = new Task(null, newTaskRequest.title(), newTaskRequest.description(), newTaskRequest.completed(), principal.getName());
+        Task savedTask = taskRepository.save(taskWithOwner);
         URI locationOfNewTask = ucb.path("/tasks/{id}").buildAndExpand(savedTask.id()).toUri();
         return ResponseEntity.created(locationOfNewTask).build();
     }
