@@ -144,4 +144,12 @@ class TaskmanagerApplicationTests {
 			.getForEntity("/tasks/99", String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 	}
+
+	@Test
+	void shouldRejectUsersWhoAreNotTaskOwners() {
+		ResponseEntity<String> response = restTemplate
+			.withBasicAuth("maria-owns-no-tasks", "qrs456")
+			.getForEntity("/tasks/99", String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+	}
 }

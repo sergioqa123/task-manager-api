@@ -20,7 +20,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(request -> request
                 .requestMatchers("/tasks/**")
-                .authenticated())
+                .hasRole("TASK-OWNER"))
             .httpBasic(Customizer.withDefaults())
             .csrf(csrf -> csrf.disable());
         return http.build();
@@ -37,8 +37,13 @@ public class SecurityConfig {
         UserDetails sergio = users
             .username("sergio")
             .password(passwordEncoder.encode("abc123"))
-            .roles()
+            .roles("TASK-OWNER")
             .build();
-        return new InMemoryUserDetailsManager(sergio);
+        UserDetails maria = users
+            .username("maria-owns-no-tasks")
+            .password(passwordEncoder.encode("qrs456"))
+            .roles("NON-OWNER")
+            .build();
+        return new InMemoryUserDetailsManager(sergio, maria);
     }
 }
