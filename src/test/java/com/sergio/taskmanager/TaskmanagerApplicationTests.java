@@ -152,4 +152,12 @@ class TaskmanagerApplicationTests {
 			.getForEntity("/tasks/99", String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
 	}
+
+	@Test
+	void shouldNotAllowTasksTheyDoNotOwn() {
+		ResponseEntity<String> response = restTemplate
+			.withBasicAuth("sergio", "abc123")
+			.getForEntity("/tasks/102", String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+	}
 }
