@@ -25,7 +25,7 @@ class TaskmanagerApplicationTests {
 
 	@Test
 	void shouldReturnATaskWhenDataIsSaved() {
-		ResponseEntity<String> response = restTemplate.getForEntity("/tasks/99", String.class);
+		ResponseEntity<String> response = restTemplate.withBasicAuth("sergio", "abc123").getForEntity("/tasks/99", String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		DocumentContext documentContext = JsonPath.parse(response.getBody());
@@ -45,7 +45,7 @@ class TaskmanagerApplicationTests {
 
 	@Test
 	void shouldNotReturnATaskWhenIdIsUnknown() {
-		ResponseEntity<String> response = restTemplate.getForEntity("/tasks/1000", String.class);
+		ResponseEntity<String> response = restTemplate.withBasicAuth("sergio", "abc123").getForEntity("/tasks/1000", String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 		assertThat(response.getBody()).isBlank();
 	}
@@ -54,11 +54,11 @@ class TaskmanagerApplicationTests {
 	@DirtiesContext
 	void shouldCreateANewTask() {
 		Task newTask = new Task(null, "New Task", "This is a new task.", false, "sergio");
-		ResponseEntity<Void> responseEntity = restTemplate.postForEntity("/tasks", newTask, Void.class);
+		ResponseEntity<Void> responseEntity = restTemplate.withBasicAuth("sergio", "abc123").postForEntity("/tasks", newTask, Void.class);
 		assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
 		URI locationOfNewTask = responseEntity.getHeaders().getLocation();
-		ResponseEntity<String> response = restTemplate.getForEntity(locationOfNewTask, String.class);
+		ResponseEntity<String> response = restTemplate.withBasicAuth("sergio", "abc123").getForEntity(locationOfNewTask, String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 		
 		DocumentContext documentContext = JsonPath.parse(response.getBody());
@@ -74,7 +74,7 @@ class TaskmanagerApplicationTests {
 
 	@Test
 	void shouldReturnAllTasksWhenListIsRequested() {
-		ResponseEntity<String> response = restTemplate.getForEntity("/tasks", String.class);
+		ResponseEntity<String> response = restTemplate.withBasicAuth("sergio", "abc123").getForEntity("/tasks", String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		DocumentContext documentContext = JsonPath.parse(response.getBody());
@@ -93,7 +93,7 @@ class TaskmanagerApplicationTests {
 
 	@Test
 	void shouldReturnAPageOfTasks() {
-		ResponseEntity<String> response = restTemplate.getForEntity("/tasks?page=0&size=1", String.class);
+		ResponseEntity<String> response = restTemplate.withBasicAuth("sergio", "abc123").getForEntity("/tasks?page=0&size=1", String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		DocumentContext documentContext = JsonPath.parse(response.getBody());
@@ -103,7 +103,7 @@ class TaskmanagerApplicationTests {
 
 	@Test
 	void shouldReturnASortedPageOfTasks() {
-		ResponseEntity<String> response = restTemplate.getForEntity("/tasks?page=0&size=1&sort=id,desc", String.class);
+		ResponseEntity<String> response = restTemplate.withBasicAuth("sergio", "abc123").getForEntity("/tasks?page=0&size=1&sort=id,desc", String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		DocumentContext documentContext = JsonPath.parse(response.getBody());
@@ -122,7 +122,7 @@ class TaskmanagerApplicationTests {
 
 	@Test
 	void shouldReturnASortedPageOfTasksWithNoParametersAndUseDefaultValues() {
-		ResponseEntity<String> response = restTemplate.getForEntity("/tasks", String.class);
+		ResponseEntity<String> response = restTemplate.withBasicAuth("sergio", "abc123").getForEntity("/tasks", String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
 		DocumentContext documentContext = JsonPath.parse(response.getBody());
@@ -130,5 +130,18 @@ class TaskmanagerApplicationTests {
 		assertThat(page.size()).isEqualTo(3);
 		JSONArray ids = documentContext.read("$..id");
 		assertThat(ids).containsExactly(99, 100, 101);
+	}
+
+	@Test
+	void shouldNotReturnATaskWhenUsingBadCredentials() {
+		ResponseEntity<String> response = restTemplate
+			.withBasicAuth("sergio", "wrongpassword")
+			.getForEntity("/tasks/99", String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
+
+		response = restTemplate
+			.withBasicAuth("unknownuser", "abc123")
+			.getForEntity("/tasks/99", String.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
 	}
 }
