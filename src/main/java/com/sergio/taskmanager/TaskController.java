@@ -2,7 +2,7 @@ package com.sergio.taskmanager;
 
 import java.net.URI;
 import java.security.Principal;
-import java.util.*;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,9 +24,9 @@ class TaskController {
 
     @GetMapping("/{requestedId}")
     private ResponseEntity<Task> findById(@PathVariable Long requestedId, Principal principal) {
-        Optional<Task> task = Optional.ofNullable(taskRepository.findByIdAndOwner(requestedId, principal.getName()));
-        if (task.isPresent()) {
-            return ResponseEntity.ok(task.get());
+        Task task = taskRepository.findByIdAndOwner(requestedId, principal.getName());
+        if (task != null) {
+            return ResponseEntity.ok(task);
         } else {
             return ResponseEntity.notFound().build();
         }
