@@ -56,9 +56,12 @@ class TaskController {
     @PutMapping("/{requestedId}")
     private ResponseEntity<Void> putTask(@PathVariable Long requestedId, @RequestBody Task taskUpdate, Principal principal) {
         Task task = taskRepository.findByIdAndOwner(requestedId, principal.getName());
-        Task updatedTask = new Task(task.id(), taskUpdate.title(), taskUpdate.description(), taskUpdate.completed(), principal.getName());
-        taskRepository.save(updatedTask);
-        return ResponseEntity.noContent().build();
+        if (task != null) {
+            Task updatedTask = new Task(task.id(), taskUpdate.title(), taskUpdate.description(), taskUpdate.completed(), principal.getName());
+            taskRepository.save(updatedTask);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
     
 }
