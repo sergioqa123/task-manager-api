@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -159,5 +161,15 @@ class TaskmanagerApplicationTests {
 			.withBasicAuth("sergio", "abc123")
 			.getForEntity("/tasks/102", String.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+	}
+
+	@Test
+	void shouldUpdateAnExistingTask() {
+		Task updatedTask = new Task(null, "Updated Task", "This task has been updated.", true, null);
+		HttpEntity<Task> request = new HttpEntity<>(updatedTask);
+		ResponseEntity<Void> response = restTemplate
+			.withBasicAuth("sergio", "abc123")
+			.exchange("/tasks/99", HttpMethod.PUT, request, Void.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 	}
 }
