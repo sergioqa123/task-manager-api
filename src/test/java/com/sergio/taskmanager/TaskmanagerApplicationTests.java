@@ -184,4 +184,14 @@ class TaskmanagerApplicationTests {
 		boolean completed = documentContext.read("$.completed");
 		assertThat(completed).isTrue();
 	}
+
+	@Test
+	void shouldNotUpdateATaskThatDoesNotExist() {
+		Task updatedTask = new Task(null, "Updated Task", "This task has been updated.", true, null);
+		HttpEntity<Task> request = new HttpEntity<>(updatedTask);
+		ResponseEntity<Void> response = restTemplate
+			.withBasicAuth("sergio", "abc123")
+			.exchange("/tasks/999", HttpMethod.PUT, request, Void.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+	}
 }
