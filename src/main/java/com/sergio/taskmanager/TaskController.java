@@ -24,7 +24,7 @@ class TaskController {
 
     @GetMapping("/{requestedId}")
     private ResponseEntity<Task> findById(@PathVariable Long requestedId, Principal principal) {
-        Task task = taskRepository.findByIdAndOwner(requestedId, principal.getName());
+        Task task = findTask(requestedId, principal);
         if (task != null) {
             return ResponseEntity.ok(task);
         } else {
@@ -55,7 +55,7 @@ class TaskController {
 
     @PutMapping("/{requestedId}")
     private ResponseEntity<Void> putTask(@PathVariable Long requestedId, @RequestBody Task taskUpdate, Principal principal) {
-        Task task = taskRepository.findByIdAndOwner(requestedId, principal.getName());
+        Task task = findTask(requestedId, principal);
         if (task != null) {
             Task updatedTask = new Task(task.id(), taskUpdate.title(), taskUpdate.description(), taskUpdate.completed(), principal.getName());
             taskRepository.save(updatedTask);
@@ -63,5 +63,8 @@ class TaskController {
         }
         return ResponseEntity.notFound().build();
     }
-    
+
+    private Task findTask(Long requestedId, Principal principal) {
+        return taskRepository.findByIdAndOwner(requestedId, principal.getName());
+    }
 }
