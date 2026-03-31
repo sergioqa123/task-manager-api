@@ -194,4 +194,14 @@ class TaskmanagerApplicationTests {
 			.exchange("/tasks/999", HttpMethod.PUT, request, Void.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
+
+	@Test
+	void shouldNotUpdateATaskThatIsOwnedBySomeoneElse() {
+		Task updatedTask = new Task(null, "Updated Task", "This task has been updated.", true, null);
+		HttpEntity<Task> request = new HttpEntity<>(updatedTask);
+		ResponseEntity<Void> response = restTemplate
+			.withBasicAuth("sergio", "abc123")
+			.exchange("/tasks/102", HttpMethod.PUT, request, Void.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+	}
 }
