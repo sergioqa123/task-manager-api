@@ -211,5 +211,10 @@ class TaskmanagerApplicationTests {
 			.withBasicAuth("sergio", "abc123")
 			.exchange("/tasks/99", HttpMethod.DELETE, null, Void.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+		ResponseEntity<String> getResponse = restTemplate
+			.withBasicAuth("sergio", "abc123")
+			.getForEntity("/tasks/99", String.class);
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
 }
