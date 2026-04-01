@@ -67,4 +67,13 @@ class TaskController {
     private Task findTask(Long requestedId, Principal principal) {
         return taskRepository.findByIdAndOwner(requestedId, principal.getName());
     }
+
+    @DeleteMapping("/{requestedId}")
+    private ResponseEntity<Void> deleteTask(@PathVariable Long requestedId, Principal principal) {
+        if (taskRepository.existsByIdAndOwner(requestedId, principal.getName())) {
+            taskRepository.deleteById(requestedId);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
 }
