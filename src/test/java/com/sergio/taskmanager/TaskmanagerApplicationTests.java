@@ -225,4 +225,17 @@ class TaskmanagerApplicationTests {
 			.exchange("/tasks/999", HttpMethod.DELETE, null, Void.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
+
+	@Test
+	void shouldNotAllowDeletionOfTasksTheyDoNotOwn() {
+		ResponseEntity<Void> response = restTemplate
+			.withBasicAuth("sergio", "abc123")
+			.exchange("/tasks/102", HttpMethod.DELETE, null, Void.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+		ResponseEntity<String> getResponse = restTemplate
+			.withBasicAuth("david", "xyz789")
+			.getForEntity("/tasks/102", String.class);
+		assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+	}
 }
