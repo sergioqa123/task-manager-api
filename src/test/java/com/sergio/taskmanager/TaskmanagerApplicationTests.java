@@ -204,4 +204,12 @@ class TaskmanagerApplicationTests {
 			.exchange("/tasks/102", HttpMethod.PUT, request, Void.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 	}
+
+	@Test
+	void shouldDeleteAnExistingTask() {
+		ResponseEntity<Void> response = restTemplate
+			.withBasicAuth("sergio", "abc123")
+			.exchange("/tasks/99", HttpMethod.DELETE, null, Void.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+	}
 }
